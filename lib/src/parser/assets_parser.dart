@@ -20,12 +20,22 @@ Assets parseAssets(YamlMap yaml, List<String> ignoreAssets,
   final assetFiles = <File>{};
   final declared = <String>[];
   for (final asset in assets) {
+    String? assetPath;
+
     if (asset is String) {
-      if (assetShouldBeIgnored(asset, ignoreAssets)) {
+      assetPath = asset;
+    } else if (asset is YamlMap) {
+      if (asset.containsKey('path')) {
+        assetPath = asset.value['path'];
+      }
+    }
+
+    if (assetPath != null) {
+      if (assetShouldBeIgnored(assetPath, ignoreAssets)) {
         continue;
       }
-      declared.add(asset);
-      assetFiles.addAll(_findFiles(asset, ignoreAssets));
+      declared.add(assetPath);
+      assetFiles.addAll(_findFiles(assetPath, ignoreAssets));
     }
   }
 
